@@ -19,7 +19,7 @@ import sed_eval
 import pickle
 
 
-def build_custom_cnn(n_freq_cnn=128, n_frames_cnn=50, n_filters_cnn=64,
+def build_custom_cnn(n_freq_cnn=128, n_frames_cnn=50, n_filters_cnn=128,
                      filter_size_cnn=(5, 5), pool_size_cnn=(2,2),
                      n_classes=10):
 
@@ -47,9 +47,9 @@ def build_custom_cnn(n_freq_cnn=128, n_frames_cnn=50, n_filters_cnn=64,
     # Flatten for dense layers
     y = Flatten()(y)
     y = Dropout(0.5)(y)
-    y = Dense(64, activation='relu')(y)
-    # y = Dropout(0.5)(y)
-    # y = Dense(128, activation='relu')(y)
+    y = Dense(128, activation='relu')(y)
+    y = Dropout(0.5)(y)
+    y = Dense(128, activation='relu')(y)
     y = Dropout(0.5)(y)
     y = Dense(n_classes, activation='sigmoid')(y)
 
