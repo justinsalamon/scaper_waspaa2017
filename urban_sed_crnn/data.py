@@ -45,7 +45,8 @@ def load_urbansed_crnn(sequence_frames=128, sequence_hop=64,
     train_labels = []
 
     # Get list of train files
-    train_files = glob.glob(os.path.join(feature_folder, 'train', '*.npy.gz'))
+    train_files = sorted(glob.glob(os.path.join(feature_folder,
+                                                'train', '*.npy.gz')))
 
     # Append training data
     for n, tf in enumerate(train_files):
@@ -77,10 +78,12 @@ def load_urbansed_crnn(sequence_frames=128, sequence_hop=64,
     # THEN GENERATE ACTUAL TRAIN/VALIDATE/TEST SETS
 
     # Get train, validate, and test files
-    train_files = glob.glob(os.path.join(feature_folder, 'train', '*.npy.gz'))
-    validate_files = glob.glob(os.path.join(feature_folder, 'validate',
-                                            '*.npy.gz'))
-    test_files = glob.glob(os.path.join(feature_folder, 'test', '*.npy.gz'))
+    train_files = sorted(glob.glob(os.path.join(feature_folder,
+                                                'train', '*.npy.gz')))
+    validate_files = sorted(glob.glob(os.path.join(feature_folder,
+                                                   'validate', '*.npy.gz')))
+    test_files = sorted(glob.glob(os.path.join(feature_folder,
+                                               'test', '*.npy.gz')))
 
     # Create full training set
     for n, tf in enumerate(train_files):
