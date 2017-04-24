@@ -14,8 +14,6 @@ def evaluate_load_test(expid, audio_hop=882, sr=44100, sequence_frames=50,
                        sequence_hop=25, normalize_data=True, mel_bands=128,
                        large_cnn=False, frame_level_y=False):
 
-    fold_results = []
-
     modelfolder = (
         '/scratch/js7561/datasets/scaper_waspaa2017/urban-sed/models')
     expfolder = os.path.join(modelfolder, expid)
@@ -71,8 +69,6 @@ def evaluate_load_test(expid, audio_hop=882, sr=44100, sequence_frames=50,
     seg_metrics100ms.evaluate(ref_event_list, est_event_list)
     results100ms = seg_metrics100ms.results()
 
-    fold_results.append([results1s, results100ms])
-
     # Report scores
     scores = (
         'F1s: {:.4f}, P1s: {:.4f}, R1s: {:.4f}, F100ms: {:.4f}, '
@@ -91,7 +87,7 @@ def evaluate_load_test(expid, audio_hop=882, sr=44100, sequence_frames=50,
 
     # Save scores
     results_all = {'results1s': results1s, 'results100ms': results100ms}
-    results_all_file = os.path.join(expfolder, 'test_results.json')
+    results_all_file = os.path.join(expfolder, 'test_results_load.json')
     json.dump(results_all, open(results_all_file, 'w'), indent=2)
 
     return results_all
