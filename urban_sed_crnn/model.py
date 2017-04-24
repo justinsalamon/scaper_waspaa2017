@@ -67,7 +67,7 @@ def makeRNNCell(inputHeight, numFreq, rnnSize, f=GRU):
     y = f(96, return_sequences=True, dropout=0.25, recurrent_dropout=0.25)(x)
     y = f(96, return_sequences=True, dropout=0.25, recurrent_dropout=0.25)(y)
     y = f(96, return_sequences=True, dropout=0.25, recurrent_dropout=0.25)(y)
-    y = TimeDistributed(Dense(17, activation='sigmoid'))(y)
+    y = TimeDistributed(Dense(numFreq, activation='sigmoid'))(y)
 
     m = Model(inputs=x, outputs=y)
     return m
