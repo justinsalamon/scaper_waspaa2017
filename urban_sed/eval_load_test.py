@@ -49,7 +49,7 @@ def evaluate_load_test(expid, audio_hop=882, sr=44100, sequence_frames=50,
     # Convert event rolls into even lists
     if frame_level_y:
         est_event_list = event_roll_to_event_list(
-            est_roll, label_list, audio_hop/float(sr))
+            est_roll, label_list, 1.0)
         ref_event_list = event_roll_to_event_list(
             ref_roll, label_list, audio_hop/float(sr))
     else:
