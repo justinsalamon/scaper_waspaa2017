@@ -1,7 +1,7 @@
 # CREATED: 4/7/17 11:38 by Justin Salamon <justin.salamon@nyu.edu>
 
 import numpy as np
-# from scaper_waspaa2017.urban_sed.model import build_custom_cnn
+from scaper_waspaa2017.urban_sed.model import build_custom_cnn
 from scaper_waspaa2017.urban_sed.data import load_urbansed_cnn
 from scaper_waspaa2017.urban_sed.util import event_roll_to_event_list
 import sed_eval
@@ -12,7 +12,7 @@ import gzip
 
 def evaluate(expid, audio_hop=882, sr=44100, sequence_frames=50,
              sequence_hop=25, normalize_data=True, mel_bands=128,
-             load_predictions=True):
+             load_predictions=True, large_cnn=False):
 
     fold_results = []
 
@@ -36,7 +36,7 @@ def evaluate(expid, audio_hop=882, sr=44100, sequence_frames=50,
     else:
 
         # Build model and load in best weights
-        model = build_custom_cnn(n_freq_cnn=mel_bands)
+        model = build_custom_cnn(n_freq_cnn=mel_bands, large_cnn=large_cnn)
         model.compile(optimizer='adam', loss='binary_crossentropy',
                       metrics=['accuracy'])
         weightfile = os.path.join(expfolder, 'weights_best.hdf5'.format(expid))
