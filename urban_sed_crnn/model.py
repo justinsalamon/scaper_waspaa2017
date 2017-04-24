@@ -165,7 +165,8 @@ def run_experiment_sedeval(expid, epochs=1000, metrics=['accuracy'],
 
     # Build model
     print('\nBuilding model...')
-    model = build_crnn(n_freq_cnn=mel_bands)
+    # model = build_crnn(n_freq_cnn=mel_bands)
+    model = build_crnn_onestep(n_freq_cnn=mel_bands)
     model.compile(loss='binary_crossentropy',
                   optimizer='adam',
                   metrics=metrics)
