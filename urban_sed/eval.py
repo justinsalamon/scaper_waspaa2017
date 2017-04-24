@@ -63,9 +63,9 @@ def evaluate(expid, audio_hop=882, sr=44100, sequence_frames=50,
     # COMPUTE FOLD RESULTS AND REPORT
     # Convert event rolls into even lists
     est_event_list = event_roll_to_event_list(
-        est_roll, label_list, 1.0)
+        est_roll, label_list, 0.1)
     ref_event_list = event_roll_to_event_list(
-        ref_roll, label_list, 1.0)
+        ref_roll, label_list, 0.1)
 
     # Compute metrics at 1s and 100ms levels
     seg_metrics1s = sed_eval.sound_event.SegmentBasedMetrics(
