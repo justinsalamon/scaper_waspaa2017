@@ -276,7 +276,9 @@ def load_urbansed_cnn_test(expid, sequence_frames=50,
     id_test = []
 
     # Load scaler
-    expfolder = os.path.join()
+    expfolder = os.path.join(
+        '/scratch/js7561/datasets/scaper_waspaa2017/urban-sed/models',
+        expid)
     scaler_file = os.path.join(expfolder, 'scaler.pkl')
     scaler = pickle.load(open(scaler_file, 'rb'))
 
