@@ -19,9 +19,13 @@ import sed_eval
 import pickle
 
 
-def build_custom_cnn(n_freq_cnn=128, n_frames_cnn=50, n_filters_cnn=128,
+def build_custom_cnn(n_freq_cnn=128, n_frames_cnn=50, n_filters_cnn=64,
                      filter_size_cnn=(5, 5), pool_size_cnn=(2,2),
-                     n_classes=10):
+                     n_classes=10, large_cnn=False, n_dense_cnn=64):
+
+    if large_cnn:
+        n_filters_cnn = 128
+        n_dense_cnn = 128
 
     # INPUT
     x = Input(shape=(n_freq_cnn, n_frames_cnn, 1), dtype='float32')
@@ -47,9 +51,10 @@ def build_custom_cnn(n_freq_cnn=128, n_frames_cnn=50, n_filters_cnn=128,
     # Flatten for dense layers
     y = Flatten()(y)
     y = Dropout(0.5)(y)
-    y = Dense(128, activation='relu')(y)
-    y = Dropout(0.5)(y)
-    y = Dense(128, activation='relu')(y)
+    y = Dense(n_dense_cnn, activation='relu')(y)
+    if large_cnn:
+        y = Dropout(0.5)(y)
+        y = Dense(n_dense_cnn, activation='relu')(y)
     y = Dropout(0.5)(y)
     y = Dense(n_classes, activation='sigmoid')(y)
 
@@ -64,7 +69,8 @@ def run_experiment_sedeval(expid, epochs=1000, metrics=['accuracy'],
                            epoch_limit=2048,
                            sed_early_stopping=100, normalize_data=True,
                            fit_verbose=True, mel_bands=40, resume=False,
-                           resume_f1_best=0, load_subset=None):
+                           resume_f1_best=0, load_subset=None,
+                           large_cnn=False):
     # Print out library versions
     print('Module versions:')
     print('keras version: {:s}'.format(keras.__version__))
@@ -97,7 +103,7 @@ def run_experiment_sedeval(expid, epochs=1000, metrics=['accuracy'],
 
     # Build model
     print('\nBuilding model...')
-    model = build_custom_cnn(n_freq_cnn=mel_bands)
+    model = build_custom_cnn(n_freq_cnn=mel_bands, large_cnn=large_cnn)
     model.compile(loss='binary_crossentropy',
                   optimizer='adam',
                   metrics=metrics)
