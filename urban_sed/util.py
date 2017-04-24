@@ -98,3 +98,21 @@ def combine_event_rolls(est_prob, ref_roll, threshold=0.5):
     y_track = np.asarray(y_track)
 
     return p_track, y_track
+
+
+def combine_event_rolls_separate(est_prob, ref_roll, threshold=0.5):
+
+    p_track = []
+    y_track = []
+
+    for p in est_prob:
+        pbin = (1 * (p >= threshold))
+        p_track.extend(pbin.tolist())
+
+    for y in ref_roll:
+        y_track.extend(y.tolist())
+
+    p_track = np.asarray(p_track)
+    y_track = np.asarray(y_track)
+
+    return p_track, y_track

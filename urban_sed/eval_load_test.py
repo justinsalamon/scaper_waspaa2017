@@ -5,6 +5,7 @@ from scaper_waspaa2017.urban_sed.model import build_custom_cnn
 from scaper_waspaa2017.urban_sed.data import load_urbansed_cnn_test
 from scaper_waspaa2017.urban_sed.util import event_roll_to_event_list
 from scaper_waspaa2017.urban_sed.util import combine_event_rolls
+from scaper_waspaa2017.urban_sed.util import combine_event_rolls_separate
 import sed_eval
 import os
 import json
@@ -39,8 +40,8 @@ def evaluate_load_test(expid, audio_hop=882, sr=44100, sequence_frames=50,
     pred_test = model.predict(x_test)
 
     if frame_level_y:
-        est_roll, ref_roll = combine_event_rolls(pred_test, y_test,
-                                                 threshold=0.5)
+        est_roll, ref_roll = combine_event_rolls_separate(
+            pred_test, y_test, threshold=0.5)
     else:
         ref_roll = y_test[:]
         est_roll = 1 * (pred_test >= 0.5)
