@@ -7,6 +7,8 @@ from sklearn.preprocessing import StandardScaler
 import sed_eval
 import gzip
 import glob
+import pickle
+
 
 def load_urbansed_cnn(sequence_frames=50, sequence_hop=25,
                       sequence_offset=0, audio_hop=882,
@@ -238,3 +240,110 @@ def load_urbansed_cnn(sequence_frames=50, sequence_hop=25,
 
     return (x_train, y_train, id_train, x_val, y_val, id_val, x_test, y_test,
             id_test, label_list, scaler)
+
+
+def load_urbansed_cnn_test(expid, sequence_frames=50,
+                           audio_hop=882,
+                           sr=44100, verbose=True, normalize=True,
+                           mel_bands=128, load_subset=None,
+                           frame_level_y=False, file_list=None):
+
+    hop_time = audio_hop / float(sr)
+    meta_folder = (
+        '/scratch/js7561/datasets/scaper_waspaa2017/urban-sed/metadata')
+    feature_folder = ('/scratch/js7561/datasets/scaper_waspaa2017/urban-sed/'
+                      'features/logmelspec1764_{:d}/'.format(mel_bands))
+
+    # Get label list
+    label_list = (['air_conditioner', 'car_horn', 'children_playing',
+                   'dog_bark', 'drilling', 'engine_idling', 'gun_shot',
+                   'jackhammer', 'siren', 'street_music'])
+    label_list = sorted(label_list)
+    if verbose:
+        print("label list ({:d}):".format(len(label_list)))
+        print(label_list)
+
+    # x_train = []
+    # y_train = []
+    # id_train = []
+    #
+    # x_val = []
+    # y_val = []
+    # id_val = []
+
+    x_test = []
+    y_test = []
+    id_test = []
+
+    # Load scaler
+    expfolder = os.path.join()
+    scaler_file = os.path.join(expfolder, 'scaler.pkl')
+    scaler = pickle.load(open(scaler_file, 'rb'))
+
+    assert scaler.mean_.shape[0] == mel_bands
+    assert scaler.scale_.shape[0] == mel_bands
+
+    # THEN GENERATE ACTUAL TRAIN/VALIDATE/TEST SETS
+    if file_list is not None:
+        test_files = file_list
+    else:
+        test_files = sorted(glob.glob(os.path.join(feature_folder,
+                                                   'test', '*.npy.gz')))
+
+    # Create full test set
+    for n, tf in enumerate(test_files):
+
+        feature_file = tf
+        label_file = os.path.join(meta_folder, 'test',
+                                  os.path.basename(tf).replace('.npy.gz',
+                                                               '.txt'))
+        melspec = np.load(gzip.open(feature_file, 'rb'))
+        labels = pd.read_csv(label_file, delimiter=' ', header=None)
+        labels.columns = ['event_onset', 'event_offset', 'event_label']
+
+        # get y first
+        event_roll = sed_eval.util.event_roll.event_list_to_event_roll(
+            labels.to_dict('records'), event_label_list=label_list,
+            time_resolution=hop_time)
+
+        # Carve out x's and get aligned y's
+        for i in np.arange(0,
+                           melspec.shape[1] - 1 * sequence_frames,
+                           sequence_frames):
+            # Get x
+            if normalize:
+                x_test.append(
+                    scaler.transform(melspec[:, i:i + sequence_frames].T).T)
+            else:
+                x_test.append(melspec[:, i:i + sequence_frames])
+            # Get y
+            y = (event_roll[i:i + sequence_frames, :]).tolist()
+            if len(y) != sequence_frames:
+                y.extend(np.zeros((sequence_frames - len(y), len(label_list))))
+            y = np.asarray(y)
+            assert y.shape == (sequence_frames, len(label_list))
+            if not frame_level_y:
+                y = y.any(axis=0) * 1
+                assert y.shape == (len(label_list),)
+            y_test.append(y)
+            # Get id
+            id = [tf, i]
+            id_test.append(id)
+
+        if load_subset is not None and (n+1 >= load_subset):
+            break
+
+    x_test = np.asarray(x_test)
+    y_test = np.asarray(y_test)
+    id_test = np.asarray(id_test)
+
+    # Add channel dimension for Keras
+    x_test = np.expand_dims(x_test, 3)
+
+    if verbose:
+        print('Data shapes:')
+        print(x_test.shape, y_test.shape)
+
+    return (x_test, y_test, id_test, label_list, scaler)
+
+
