@@ -29,11 +29,14 @@ def evaluate_load_test(expid, audio_hop=882, sr=44100, sequence_frames=50,
 
     # Load data
     (x_test, y_test, id_test, label_list, scaler) = load_urbansed_cnn_test(
+        expid,
         sequence_frames=sequence_frames,
         audio_hop=audio_hop, sr=sr,
         verbose=False, normalize=normalize_data,
         mel_bands=mel_bands,
-        frame_level_y=frame_level_y)
+        frame_level_y=frame_level_y,
+        load_subset=False,
+        file_list=None)
 
     pred_test = model.predict(x_test)
 
