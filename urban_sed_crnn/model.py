@@ -1,7 +1,7 @@
 # CREATED: 4/6/17 11:05 by Justin Salamon <justin.salamon@nyu.edu>
 
 from scaper_waspaa2017.urban_sed_crnn.data import load_urbansed_crnn
-from scaper_waspaa2017.urban_sed.util import event_roll_to_event_list
+from scaper_waspaa2017.urban_sed.util import event_roll_to_event_list, combine_event_rolls
 from keras.layers import Input, Conv2D, MaxPooling2D, Lambda, GRU
 from keras.layers import Dense, Flatten, Activation, TimeDistributed
 from keras.layers.core import Dropout
@@ -197,13 +197,13 @@ def run_experiment_sedeval(expid, epochs=1000, metrics=['accuracy'],
 
             # Test using sed_eval
             pred = model.predict(x_val)
-            # est_roll, ref_roll = combine_event_rolls(pred, y_test, threshold=0.5)
-            ref_roll = y_val[:]
-            est_roll = 1 * (pred >= 0.5)
+            est_roll, ref_roll = combine_event_rolls(pred, y_test, threshold=0.5)
+            # ref_roll = y_val[:]
+            # est_roll = 1 * (pred >= 0.5)
             est_event_list = event_roll_to_event_list(
-                est_roll, label_list, 1.0)
+                est_roll, label_list, audio_hop/float(sr))
             ref_event_list = event_roll_to_event_list(
-                ref_roll, label_list, 1.0)
+                ref_roll, label_list, audio_hop/float(sr))
 
             seg_metrics1s = sed_eval.sound_event.SegmentBasedMetrics(
                 label_list, time_resolution=1.0)
@@ -295,14 +295,14 @@ def run_experiment_sedeval(expid, epochs=1000, metrics=['accuracy'],
 
                 # Test using sed_eval
                 pred = model.predict(x_val)
-                # est_roll, ref_roll = combine_event_rolls(pred, y_test,
-                #                                          threshold=0.5)
-                ref_roll = y_val[:]
-                est_roll = 1 * (pred >= 0.5)
+                est_roll, ref_roll = combine_event_rolls(pred, y_test,
+                                                         threshold=0.5)
+                # ref_roll = y_val[:]
+                # est_roll = 1 * (pred >= 0.5)
                 est_event_list = event_roll_to_event_list(
-                    est_roll, label_list, 1.0)
+                    est_roll, label_list, audio_hop/float(sr))
                 ref_event_list = event_roll_to_event_list(
-                    ref_roll, label_list, 1.0)
+                    ref_roll, label_list, audio_hop/float(sr))
 
                 seg_metrics1s = sed_eval.sound_event.SegmentBasedMetrics(
                     label_list, time_resolution=1.0)
