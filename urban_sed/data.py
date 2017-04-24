@@ -165,7 +165,7 @@ def load_urbansed_cnn(sequence_frames=50, sequence_hop=25,
                                   os.path.basename(tf).replace('.npy.gz',
                                                                '.txt'))
         melspec = np.load(gzip.open(feature_file, 'rb'))
-        labels = pd.read_csv(label_file, delimiter='\t', header=None)
+        labels = pd.read_csv(label_file, delimiter=' ', header=None)
         labels.columns = ['event_onset', 'event_offset', 'event_label']
 
         # get y first
