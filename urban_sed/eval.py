@@ -1,7 +1,7 @@
 # CREATED: 4/7/17 11:38 by Justin Salamon <justin.salamon@nyu.edu>
 
 import numpy as np
-from scaper_waspaa2017.urban_sed.model import build_custom_cnn
+# from scaper_waspaa2017.urban_sed.model import build_custom_cnn
 from scaper_waspaa2017.urban_sed.data import load_urbansed_cnn
 from scaper_waspaa2017.urban_sed.util import event_roll_to_event_list
 import sed_eval
