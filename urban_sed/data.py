@@ -11,7 +11,7 @@ import glob
 def load_urbansed_cnn(sequence_frames=50, sequence_hop=25,
                       sequence_offset=0, audio_hop=882,
                       sr=44100, verbose=True, normalize=True,
-                      use_aug=False, mel_bands=128):
+                      mel_bands=128):
 
     hop_time = audio_hop / float(sr)
     meta_folder = (
