@@ -89,7 +89,7 @@ def run_experiment_sedeval(expid, epochs=1000, metrics=['accuracy'],
         verbose=True,
         normalize=normalize_data,
         mel_bands=mel_bands,
-        train_subset=load_subset)
+        load_subset=load_subset)
 
     # Build model
     print('\nBuilding model...')
