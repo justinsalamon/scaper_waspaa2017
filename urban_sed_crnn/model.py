@@ -163,6 +163,10 @@ def run_experiment_sedeval(expid, epochs=1000, metrics=['accuracy'],
         mel_bands=mel_bands,
         load_subset=load_subset)
 
+    # Save scaler object
+    scaler_file = os.path.join(expfolder, 'scaler.pkl')
+    pickle.dump(scaler, open(scaler_file, 'wb'))
+
     # Build model
     print('\nBuilding model...')
     # model = build_crnn(n_freq_cnn=mel_bands)
