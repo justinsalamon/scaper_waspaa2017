@@ -64,7 +64,7 @@ def run_experiment_sedeval(expid, epochs=1000, metrics=['accuracy'],
                            epoch_limit=2048,
                            sed_early_stopping=100, normalize_data=True,
                            fit_verbose=True, mel_bands=40, resume=False,
-                           resume_f1_best=0):
+                           resume_f1_best=0, train_subset=None):
     # Print out library versions
     print('Module versions:')
     print('keras version: {:s}'.format(keras.__version__))
@@ -88,7 +88,8 @@ def run_experiment_sedeval(expid, epochs=1000, metrics=['accuracy'],
         audio_hop=audio_hop, sr=sr,
         verbose=True,
         normalize=normalize_data,
-        mel_bands=mel_bands)
+        mel_bands=mel_bands,
+        train_subset=train_subset)
 
     # Build model
     print('\nBuilding model...')

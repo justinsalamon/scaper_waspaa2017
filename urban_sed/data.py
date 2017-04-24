@@ -11,7 +11,7 @@ import glob
 def load_urbansed_cnn(sequence_frames=50, sequence_hop=25,
                       sequence_offset=0, audio_hop=882,
                       sr=44100, verbose=True, normalize=True,
-                      mel_bands=128):
+                      mel_bands=128, train_subset=None):
 
     hop_time = audio_hop / float(sr)
     meta_folder = (
@@ -48,7 +48,7 @@ def load_urbansed_cnn(sequence_frames=50, sequence_hop=25,
     train_files = glob.glob(os.path.join(feature_folder, 'train', '*.npy.gz'))
 
     # Append training data
-    for tf in train_files:
+    for n, tf in enumerate(train_files):
 
         label_file = os.path.join(meta_folder, 'train',
                                   os.path.basename(tf).replace('.npy.gz',
@@ -59,6 +59,9 @@ def load_urbansed_cnn(sequence_frames=50, sequence_hop=25,
 
         train_features.append(melspec)
         train_labels.append(labels)
+
+        if train_subset is not None and n+1 >= (train_subset):
+            break
 
     # Fit scaler OUTSIDE OF LOOP
     tf_all = []
@@ -80,7 +83,7 @@ def load_urbansed_cnn(sequence_frames=50, sequence_hop=25,
     test_files = glob.glob(os.path.join(feature_folder, 'test', '*.npy.gz'))
 
     # Create full training set
-    for tf in train_files:
+    for n, tf in enumerate(train_files):
 
         feature_file = tf
         label_file = os.path.join(meta_folder, 'train',
@@ -117,6 +120,9 @@ def load_urbansed_cnn(sequence_frames=50, sequence_hop=25,
             # Get id
             id = [tf, i]
             id_train.append(id)
+
+        if train_subset is not None and n+1 >= train_subset:
+            break
 
     # Create full validation set
     for tf in validate_files:
