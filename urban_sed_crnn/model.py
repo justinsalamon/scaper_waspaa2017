@@ -20,6 +20,46 @@ import sed_eval
 import pickle
 
 
+def build_crnn_onestep(n_freq_cnn, n_freq_rnn=10, rnn_size=96, f=GRU):
+
+    reshape = Lambda(lambda x: K.reshape(x, (K.shape(x)[0], 5 * 96, -1, 1)))
+    squeeze = Lambda(lambda x: K.squeeze(x, -1))
+    transpose = Lambda(lambda x: K.permute_dimensions(x, (0, 2, 1)))
+
+    x = Input(shape=(n_freq_cnn, None, 1), dtype='float32')
+
+    y = Conv2D(96, (5, 5), padding='same', activation=None)(x)
+    y = BatchNormalization()(y)
+    y = Activation('relu')(y)
+    y = Dropout(0.25)(y)
+    y = MaxPooling2D(pool_size=(2, 1), strides=None, padding='valid')(y)
+
+    y = Conv2D(96, (5, 5), padding='same', activation=None)(y)
+    y = BatchNormalization()(y)
+    y = Activation('relu')(y)
+    y = Dropout(0.25)(y)
+    y = MaxPooling2D(pool_size=(2, 1), strides=None, padding='valid')(y)
+
+    y = Conv2D(96, (5, 5), padding='same', activation=None)(y)
+    y = BatchNormalization()(y)
+    y = Activation('relu')(y)
+    y = Dropout(0.25)(y)
+    y = MaxPooling2D(pool_size=(2, 1), strides=None, padding='valid')(y)
+
+    # reshape input for loading into a RNN
+    y = reshape(y)
+    y = squeeze(y)
+    y = transpose(y)
+
+    y = f(rnn_size, return_sequences=True, dropout=0.25, recurrent_dropout=0.25)(y)
+    y = f(rnn_size, return_sequences=True, dropout=0.25, recurrent_dropout=0.25)(y)
+    y = f(rnn_size, return_sequences=True, dropout=0.25, recurrent_dropout=0.25)(y)
+    y = TimeDistributed(Dense(n_freq_rnn, activation='sigmoid'))(y)
+
+    m = Model(inputs=x, outputs=y)
+    return m
+
+
 def makeCNNCell(inputHeight):
     # inputHeight: number of frequency bins
 
