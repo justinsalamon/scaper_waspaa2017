@@ -11,7 +11,7 @@ import glob
 def load_urbansed_cnn(sequence_frames=50, sequence_hop=25,
                       sequence_offset=0, audio_hop=882,
                       sr=44100, verbose=True, normalize=True,
-                      mel_bands=128, train_subset=None):
+                      mel_bands=128, load_subset=None):
 
     hop_time = audio_hop / float(sr)
     meta_folder = (
@@ -60,7 +60,7 @@ def load_urbansed_cnn(sequence_frames=50, sequence_hop=25,
         train_features.append(melspec)
         train_labels.append(labels)
 
-        if train_subset is not None and n+1 >= (train_subset):
+        if load_subset is not None and (n+1 >= load_subset):
             break
 
     # Fit scaler OUTSIDE OF LOOP
@@ -121,11 +121,11 @@ def load_urbansed_cnn(sequence_frames=50, sequence_hop=25,
             id = [tf, i]
             id_train.append(id)
 
-        if train_subset is not None and n+1 >= train_subset:
+        if load_subset is not None and (n+1 >= load_subset):
             break
 
     # Create full validation set
-    for tf in validate_files:
+    for n, tf in enumerate(validate_files):
 
         feature_file = tf
         label_file = os.path.join(meta_folder, 'validate',
@@ -163,8 +163,11 @@ def load_urbansed_cnn(sequence_frames=50, sequence_hop=25,
             id = [tf, i]
             id_val.append(id)
 
+        if load_subset is not None and (n+1 >= load_subset):
+            break
+
     # Create full test set
-    for tf in test_files:
+    for n, tf in enumerate(test_files):
 
         feature_file = tf
         label_file = os.path.join(meta_folder, 'test',
@@ -201,6 +204,9 @@ def load_urbansed_cnn(sequence_frames=50, sequence_hop=25,
             # Get id
             id = [tf, i]
             id_test.append(id)
+
+        if load_subset is not None and (n+1 >= load_subset):
+            break
 
     # Convert to ndarray and reshape
     x_train = np.asarray(x_train)
