@@ -13,7 +13,8 @@ import pickle
 def load_urbansed_cnn(sequence_frames=50, sequence_hop=25,
                       sequence_offset=0, audio_hop=882,
                       sr=44100, verbose=True, normalize=True,
-                      mel_bands=128, load_subset=None, snr_test=False):
+                      mel_bands=128, load_subset=None, snr_test=False,
+                      snr2_test=False):
 
     hop_time = audio_hop / float(sr)
     meta_folder = (
@@ -83,9 +84,16 @@ def load_urbansed_cnn(sequence_frames=50, sequence_hop=25,
                                                 'train', '*.npy.gz')))
     validate_files = sorted(glob.glob(os.path.join(feature_folder, 'validate',
                                             '*.npy.gz')))
+
     if snr_test:
+
+        if snr2_test:
+            fname = 'snr2'
+        else:
+            fname = 'snr'
+
         test_files = sorted(glob.glob(os.path.join(feature_folder,
-                                                   'snr', '*.npy.gz')))
+                                                   fname, '*.npy.gz')))
     else:
         test_files = sorted(glob.glob(os.path.join(feature_folder,
                                                    'test', '*.npy.gz')))
@@ -179,7 +187,11 @@ def load_urbansed_cnn(sequence_frames=50, sequence_hop=25,
 
         feature_file = tf
         if snr_test:
-            label_file = os.path.join(meta_folder, 'snr',
+            if snr2_test:
+                fname = 'snr2'
+            else:
+                fname = 'snr'
+            label_file = os.path.join(meta_folder, fname,
                                       os.path.basename(tf).replace('.npy.gz',
                                                                    '.txt'))
         else:
