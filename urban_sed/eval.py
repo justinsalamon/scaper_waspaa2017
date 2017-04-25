@@ -197,7 +197,7 @@ def evaluate_file_list(expid, file_list, audio_hop=882, sr=44100,
 
     # Save scores
     results_all = {'results1s': results1s, 'results100ms': results100ms}
-    results_all_file = os.path.join(expfolder, 'test_results.json')
+    results_all_file = os.path.join(expfolder, 'test_results_file_list.json')
     json.dump(results_all, open(results_all_file, 'w'), indent=2)
 
     return results_all
@@ -331,7 +331,7 @@ def evaluate_per_file(expid, file_list, audio_hop=882, sr=44100,
 
     # Save scores
     results_all = {'results1s': results1s, 'results100ms': results100ms}
-    results_all_file = os.path.join(expfolder, 'test_results.json')
+    results_all_file = os.path.join(expfolder, 'test_results_per_file.json')
     json.dump(results_all, open(results_all_file, 'w'), indent=2)
 
     return results_all
