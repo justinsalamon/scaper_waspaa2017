@@ -13,7 +13,7 @@ import pickle
 def load_urbansed_cnn(sequence_frames=50, sequence_hop=25,
                       sequence_offset=0, audio_hop=882,
                       sr=44100, verbose=True, normalize=True,
-                      mel_bands=128, load_subset=None):
+                      mel_bands=128, load_subset=None, snr_test=False):
 
     hop_time = audio_hop / float(sr)
     meta_folder = (
@@ -83,8 +83,12 @@ def load_urbansed_cnn(sequence_frames=50, sequence_hop=25,
                                                 'train', '*.npy.gz')))
     validate_files = sorted(glob.glob(os.path.join(feature_folder, 'validate',
                                             '*.npy.gz')))
-    test_files = sorted(glob.glob(os.path.join(feature_folder,
-                                               'test', '*.npy.gz')))
+    if snr_test:
+        test_files = sorted(glob.glob(os.path.join(feature_folder,
+                                                   'snr', '*.npy.gz')))
+    else:
+        test_files = sorted(glob.glob(os.path.join(feature_folder,
+                                                   'test', '*.npy.gz')))
 
     # Create full training set
     for n, tf in enumerate(train_files):
