@@ -178,9 +178,14 @@ def load_urbansed_cnn(sequence_frames=50, sequence_hop=25,
     for n, tf in enumerate(test_files):
 
         feature_file = tf
-        label_file = os.path.join(meta_folder, 'test',
-                                  os.path.basename(tf).replace('.npy.gz',
-                                                               '.txt'))
+        if snr_test:
+            label_file = os.path.join(meta_folder, 'snr',
+                                      os.path.basename(tf).replace('.npy.gz',
+                                                                   '.txt'))
+        else:
+            label_file = os.path.join(meta_folder, 'test',
+                                      os.path.basename(tf).replace('.npy.gz',
+                                                                   '.txt'))
         melspec = np.load(gzip.open(feature_file, 'rb'))
         labels = pd.read_csv(label_file, delimiter=' ', header=None)
         labels.columns = ['event_onset', 'event_offset', 'event_label']
