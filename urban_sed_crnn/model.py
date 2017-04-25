@@ -151,6 +151,18 @@ def run_experiment_sedeval(expid, epochs=1000, metrics=['accuracy'],
     if not os.path.isdir(expfolder):
         os.mkdir(expfolder)
 
+    # Build model
+    print('\nBuilding model...')
+    # model = build_crnn(n_freq_cnn=mel_bands)
+    model = build_crnn_onestep(n_freq_cnn=mel_bands)
+    model.compile(loss='binary_crossentropy',
+                  optimizer='adam',
+                  metrics=metrics)
+    if resume:
+        print('Loading best weights and resuming...')
+        weights_best_file = os.path.join(expfolder, 'weights_best.hdf5')
+        model.load_weights(weights_best_file)
+
     # Load data
     (x_train, y_train, id_train, x_val, y_val, id_val, x_test, y_test,
      id_test, label_list, scaler) = load_urbansed_crnn(
@@ -166,19 +178,6 @@ def run_experiment_sedeval(expid, epochs=1000, metrics=['accuracy'],
     # Save scaler object
     scaler_file = os.path.join(expfolder, 'scaler.pkl')
     pickle.dump(scaler, open(scaler_file, 'wb'))
-
-    # Build model
-    print('\nBuilding model...')
-    # model = build_crnn(n_freq_cnn=mel_bands)
-    model = build_crnn_onestep(n_freq_cnn=mel_bands)
-    model.compile(loss='binary_crossentropy',
-                  optimizer='adam',
-                  metrics=metrics)
-
-    if resume:
-        print('Loading best weights and resuming...')
-        weights_best_file = os.path.join(expfolder, 'weights_best.hdf5')
-        model.load_weights(weights_best_file)
 
     # Fit model
     print('\nFitting model...')
