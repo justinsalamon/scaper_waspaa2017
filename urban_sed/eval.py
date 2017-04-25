@@ -257,9 +257,14 @@ def evaluate_per_file(expid, file_list, audio_hop=882, sr=44100,
         if filename in file_list:
             y_test_filtered.append(y)
             pred_test_filtered.append(p)
-            id_test_filtered = [i]
+            id_test_filtered.append(i)
     y_test_filtered = np.asarray(y_test_filtered)
     pred_test_filtered = np.asarray(pred_test_filtered)
+    id_test_filtered = np.asarray(id_test_filtered)    
+
+    # print(y_test_filtered.shape)
+    # print(pred_test_filtered.shape)
+    # print(id_test_filtered.shape)
 
     SegMetrics1s = sed_eval.sound_event.SegmentBasedMetrics(
         label_list, time_resolution=1.0)
@@ -268,18 +273,25 @@ def evaluate_per_file(expid, file_list, audio_hop=882, sr=44100,
 
     # DO EVAL FILE BY FILES
     idx = 0
-    while idx < len(id_test_filtered)-1:
+    while idx < len(id_test_filtered):
 
         y_test_file = []
         pred_test_file = []
         id_test_file = []
 
-        current_id = id_test_filtered[idx]
-        while id_test_filtered[idx] == current_id:
+        current_id = id_test_filtered[idx][0]
+        while idx < len(id_test_filtered) and id_test_filtered[idx][0] == current_id:
             y_test_file.append(y_test_filtered[idx])
-            pred_test_file.append(pred_test_filtered)
-            id_test_file.append(id_test_filtered)
+            pred_test_file.append(pred_test_filtered[idx])
+            id_test_file.append(id_test_filtered[idx])
             idx += 1
+        y_test_file = np.asarray(y_test_file)
+        pred_test_file = np.asarray(pred_test_file)
+        id_test_file = np.asarray(id_test_file)
+
+        # print(y_test_file.shape)
+        # print(pred_test_file.shape)
+        # print(id_test_file.shape)
 
         ref_roll = y_test_file[:]
         est_roll = 1 * (pred_test_file>= 0.5)
@@ -323,3 +335,4 @@ def evaluate_per_file(expid, file_list, audio_hop=882, sr=44100,
     json.dump(results_all, open(results_all_file, 'w'), indent=2)
 
     return results_all
+
