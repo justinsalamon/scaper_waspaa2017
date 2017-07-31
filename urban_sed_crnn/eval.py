@@ -13,7 +13,7 @@ import gzip
 
 def evaluate(expid, audio_hop=882, sr=44100, sequence_frames=128,
              sequence_hop=64, normalize_data=True, mel_bands=40,
-             load_predictions=True):
+             load_predictions=True, save_results=True):
 
     fold_results = []
 
@@ -99,8 +99,10 @@ def evaluate(expid, audio_hop=882, sr=44100, sequence_frames=128,
 
     # Save scores
     results_all = {'results1s': results1s, 'results100ms': results100ms}
-    results_all_file = os.path.join(expfolder, 'test_results.json')
-    json.dump(results_all, open(results_all_file, 'w'), indent=2)
+
+    if save_results:
+        results_all_file = os.path.join(expfolder, 'test_results.json')
+        json.dump(results_all, open(results_all_file, 'w'), indent=2)
 
     return results_all
 
