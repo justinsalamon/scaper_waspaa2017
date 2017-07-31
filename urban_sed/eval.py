@@ -12,7 +12,7 @@ import gzip
 
 def evaluate(expid, audio_hop=882, sr=44100, sequence_frames=50,
              sequence_hop=25, normalize_data=True, mel_bands=128,
-             load_predictions=True, large_cnn=False):
+             load_predictions=True, large_cnn=False, save_results=True):
 
     modelfolder = (
         '/scratch/js7561/datasets/scaper_waspaa2017/urban-sed/models')
@@ -94,8 +94,10 @@ def evaluate(expid, audio_hop=882, sr=44100, sequence_frames=50,
 
     # Save scores
     results_all = {'results1s': results1s, 'results100ms': results100ms}
-    results_all_file = os.path.join(expfolder, 'test_results.json')
-    json.dump(results_all, open(results_all_file, 'w'), indent=2)
+
+    if save_results:
+        results_all_file = os.path.join(expfolder, 'test_results.json')
+        json.dump(results_all, open(results_all_file, 'w'), indent=2)
 
     return results_all
 
