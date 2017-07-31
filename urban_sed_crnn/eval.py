@@ -68,7 +68,7 @@ def evaluate(expid, audio_hop=882, sr=44100, sequence_frames=128,
     ref_event_list = event_roll_to_event_list(
         ref_roll, label_list, audio_hop/float(sr))
 
-    # Compute metrics at 1s and 100ms levels
+    # Compute metrics at 1s, 100ms and 20ms levels
     seg_metrics1s = sed_eval.sound_event.SegmentBasedMetrics(
         label_list, time_resolution=1.0)
     seg_metrics1s.evaluate(ref_event_list, est_event_list)
@@ -79,7 +79,12 @@ def evaluate(expid, audio_hop=882, sr=44100, sequence_frames=128,
     seg_metrics100ms.evaluate(ref_event_list, est_event_list)
     results100ms = seg_metrics100ms.results()
 
-    fold_results.append([results1s, results100ms])
+    seg_metrics20ms = sed_eval.sound_event.SegmentBasedMetrics(
+        label_list, time_resolution=0.020)
+    seg_metrics20ms.evaluate(ref_event_list, est_event_list)
+    results20ms = seg_metrics20ms.results()
+
+    fold_results.append([results1s, results100ms, results20ms])
 
     # Report scores
     scores = (
@@ -98,7 +103,9 @@ def evaluate(expid, audio_hop=882, sr=44100, sequence_frames=128,
     print(scores)
 
     # Save scores
-    results_all = {'results1s': results1s, 'results100ms': results100ms}
+    results_all = {'results1s': results1s,
+                   'results100ms': results100ms,
+                   'results20ms': results20ms}
 
     if save_results:
         results_all_file = os.path.join(expfolder, 'test_results.json')
