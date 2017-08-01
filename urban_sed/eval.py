@@ -105,7 +105,8 @@ def evaluate(expid, audio_hop=882, sr=44100, sequence_frames=50,
 def evaluate_file_list(expid, file_list, audio_hop=882, sr=44100,
                        sequence_frames=50,
                        sequence_hop=25, normalize_data=True, mel_bands=128,
-                       load_predictions=True, large_cnn=False):
+                       load_predictions=True, large_cnn=False,
+                       save_results=True):
 
     fold_results = []
 
@@ -199,8 +200,11 @@ def evaluate_file_list(expid, file_list, audio_hop=882, sr=44100,
 
     # Save scores
     results_all = {'results1s': results1s, 'results100ms': results100ms}
-    results_all_file = os.path.join(expfolder, 'test_results_file_list.json')
-    json.dump(results_all, open(results_all_file, 'w'), indent=2)
+
+    if save_results:
+        results_all_file = os.path.join(expfolder,
+                                        'test_results_file_list.json')
+        json.dump(results_all, open(results_all_file, 'w'), indent=2)
 
     return results_all
 
